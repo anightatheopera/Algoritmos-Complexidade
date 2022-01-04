@@ -99,6 +99,7 @@ int homomorfOK (GrafoL g, GrafoL h, int f[]){
     return 1;
 }
 
+/*
 int main(){
     GrafoL yuh = {0};
     fromMat(teste,yuh);
@@ -110,3 +111,4 @@ int main(){
     printf("%d numero de coisas", ola);
     return 0;
 }
+*/ 
