@@ -4,7 +4,7 @@
 
 int minHeap[] = {56,78,43,100,30,85,95};
 
-#define Max 100
+#define Max 10
 typedef struct pQueue {
     int valores [Max];
     int tamanho;
@@ -63,12 +63,14 @@ int add(int x, PriorityQueue *q){
     return 0;
 }
 
-int remover(PriorityQueue *q, int *rem) {
-    if(q->tamanho == 0) return 1;
+int remover(PriorityQueue *q, int *rem){
+    if(isEmpty(q)) return 1;
+
     *rem = q->valores[0];
+    q->valores[0] = q->valores[q->tamanho-1];
     q->tamanho--;
-    for(int i = 0; i < q->tamanho; i++)
-      q->valores[i] = q->valores[i+1];
+    bubbleDown(0,q->valores,q->tamanho);
+
     return 0;
 }
 
@@ -267,24 +269,24 @@ void set_Delete(char *s, THash2 t){
 }
 
 int main(){
-    //PriorityQueue pq = (PriorityQueue){.valores = {1,2,3,4,5,6}, .tamanho = 0};
-    //teste(&pq);
-    //remover(&pq,pq.valores);
+    PriorityQueue pq = (PriorityQueue){.valores = {10,15,11,16,22}, .tamanho = 0};
+    teste(&pq);
+    remover(&pq,pq.valores);
     //int *aux = sequencia(minHeap,7,3);
-    //for(int i=0;i<3;i++){
-    //    printf("%d ", aux[i]);
-    //}
-    THash2 t;
-    initEmpty2(t);
-    add2("boing",t);
-    add2("a tua prima",t);
-    add2("a tua prima",t);
-    add2("a tua prima",t);
-    add2("toppppppp",t);
-    garb_collection(t);
-    for(int i=0;i<Size2;i++){
-        if(t[i].status == Used)
-            printf("%s %d %d\n", t[i].chave, t[i].ocorr, t[i].status);
+    for(int i=0;i<Max;i++){
+        printf("%d ", pq.valores[i]);
     }
+    //THash2 t;
+    //initEmpty2(t);
+    //add2("boing",t);
+    //add2("a tua prima",t);
+    //add2("a tua prima",t);
+    //add2("a tua prima",t);
+    //add2("toppppppp",t);
+    //garb_collection(t);
+    //for(int i=0;i<Size2;i++){
+    //    if(t[i].status == Used)
+    //        printf("%s %d %d\n", t[i].chave, t[i].ocorr, t[i].status);
+    //}
     return 0;
 }
