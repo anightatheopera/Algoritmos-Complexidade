@@ -9,6 +9,36 @@ GrafoM norient = {
     {13, 17, 20, 0}
                };
 
+GrafoM teste3 = {
+//   a  b  c  d  e  f 
+    {0, 1, 0, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0},
+    {1, 0, 0, 0, 1, 0},
+    {1, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 1},
+    {0, 0, 0, 1, 0, 0},
+               };  
+
+GrafoM teste4 = {
+//   a  b  c  d  e  f 
+    {0, 1, 1, 1, 1, 0},
+    {1, 0, 0, 1, 0, 0},
+    {1, 0, 0, 0, 1, 0},
+    {1, 1, 0, 0, 0, 1},
+    {1, 0, 1, 0, 0, 1},
+    {0, 0, 0, 1, 1, 0},
+               };              
+
+GrafoM acicl = {
+//   a  b  c  d  e  f 
+    {0, 1, 0, 1, 1, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 1},
+    {0, 0, 1, 0, 0, 0},
+               };  
+
 int DFRec(GrafoL g, int or, int v[], int p[], int l[]){
     int i = 1; LAdj a;
     v[or]=-1;
@@ -35,12 +65,12 @@ int DF(GrafoL g, int or, int v[], int p[], int l[]){
 }
 
 
-int BF(GrafoL g, int or, int v[], int p[], int l[]){
+int BF (GrafoL g, int or, int v[], int p[], int l[]){
     int i, x; LAdj a;
     int q[NV], front, end;
     for (i=0; i<NV; i++) {
         v[i]=0;
-        p[i] = -1;
+        p[i] = -10;
         l[i] = -1;
     }
     front = end = 0;
@@ -49,17 +79,26 @@ int BF(GrafoL g, int or, int v[], int p[], int l[]){
     i=1;
     while (front != end){
         x = q[front++]; //dequeue
-        for (a=g[x]; a!=NULL; a=a->prox){
-            if (v[a->dest]){
-                i++;
-                v[a->dest]=1;
-                p[a->dest]=x;
-                l[a->dest]=1+l[x];
-                q[end++]=a->dest; //enqueue
+        for (a=g[x]; a!=NULL; a=a->prox)
+            if (!v[a->dest]) {
+	            i++;
+	            v[a->dest]=1;
+	            p[a->dest]=x;
+	            l[a->dest]=1+l[x];
+	            q[end++]=a->dest; //enqueue
             }
-        }
-    }
-    return i;
+  }
+  return i;
+}
+
+void test_BF(GrafoL g, GrafoM h) {
+    int i, n, v[NV], p[NV], l[NV];
+    printf("----------------------\nTESTE BF:\n=========\n");
+    fromMat(h,g);
+    n = BF(g, 0, v, p, l);
+    printf("Visitados = %d\n", n);
+    for (i=0; i<NV; i++)
+        printf("v[%d] = %d\tp[%d] = %d\tl[%d] = %d\n", i, v[i], i, p[i], i, l[i]);
 }
 
 int maisLonga(GrafoL g, int or, int p[]) {
@@ -79,31 +118,78 @@ int maisLonga(GrafoL g, int or, int p[]) {
     return d;
 }
 
+
 int componentes (GrafoL g, int c[]) {
-    int comp, orig, i, v[NV], p[NV], l[NV];
-    // primeira componente: usa c[] como array visitados...
-    DF(g, 0, c, p, l);
-    comp = 1;
-    do {
+    int comp, orig = 0, i, v[NV], p[NV], l[NV];
+    // primeira componente: usa c[] como array visitados (serve de inicialização)
+    BF(g, 0, c, p, l);
+    comp = 1; //componentes já processadas
+    while (orig < NV){
         for (orig=0; c[orig] && orig < NV; orig++); // primeiro 0 em c[]
         if (orig < NV) {
-            DF(g, orig, v, p, l);
-            comp++;
+            BF(g, orig, v, p, l); //obs: agora v[] já é um vector distinto de c[]
+            comp++; 
+            // copia informação dos visitados para array c[]
             for (i=0; i<NV; i++)
                 if (v[i]) c[i]=comp;
         }
-    } while (orig < NV);
+    } 
     return comp;
 }
 
+
+int OrdTopRec (GrafoL g, int n, int or, int v[], int ord[]) {
+  LAdj a;
+  v[or] = -1;
+  for (a=g[or]; a; a=a->prox) {
+    if (v[a->dest]==-1) 
+        return -1;
+    if (!v[a->dest]){
+      n = OrdTopRec(g,n,a->dest,v,ord);
+      if (n<0) return -1;
+    }
+  } 
+  v[or] = 1;
+  ord[n] = or;
+  return n+1;
+}
+
+int ordTop (GrafoL g, int ord[]) {
+    int v[NV], o, n, i;
+    for (i=0; i<NV; i++) v[i]=0;
+    n = 0;
+    o = 0;
+    do {
+        n = OrdTopRec(g,n,o,v,ord);
+        if (n < 0) return 1;
+        if (n < NV)
+            for (o=1; v[o] && o<NV; o++);
+    } while (n < NV);
+    return 0;
+}
+
+void printGrafoL(GrafoL g) {
+    int i;
+    LAdj aux;
+    for (i=0; i<NV; i++) {
+        printf("%d : ", i);
+        for (aux = g[i]; aux != NULL; aux = aux->prox)
+            printf("%d(%d), ", aux->dest, aux->custo);
+        printf("\n");
+    }
+}
+
+
 int main(){
     GrafoL yuh = {};
-    int p[NV];
+    //int p[NV];
     //int v[NV];
-    fromMat(norient,yuh);
-    componentes(yuh,p);
+    fromMat(acicl,yuh);
+    printGrafoL(yuh);
+    test_BF(yuh,acicl);
+    //int a = componentes(yuh,p);
+    //printGrafoL(yuh);
+    //componentes(yuh,p);
     //fromMat(teste,yuh);
-    //printf("%d mais longa \n", BF(yuh,0,v,p,len));
-    //printf("%d mais longa \n", BF(yuh,3,v,p,len));
     return 0;
 }

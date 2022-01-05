@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define NV 4
+#define NV 6
 typedef struct aresta {
     int dest; 
     int custo;
@@ -32,14 +32,19 @@ LAdj append(int dest, int custo, LAdj cauda){
     return novo;
 }
 
-void fromMat (GrafoM in, GrafoL out){
-    for(int i = 0; i < NV; i++){
-        for(int j = 0; j < NV; j++){
-            if(in[i][j] != 0){
-                out[i] = append(j, in[i][j], out[i]);
-            }
-        }
-    }
+void initGrafoL(GrafoL g) {
+    int i;
+    for (i=0; i<NV; i++)
+        g[i] = NULL;
+}
+
+void fromMat( GrafoM in, GrafoL out) {
+    int i, j;
+    initGrafoL(out);
+    for (i=0; i<NV; i++)
+        for (j=0; j<NV; j++)
+            if (in[i][j] > 0)
+	            out[i] = append( j, in[i][j], out[i]);
 }
 
 void graphl_debug(GrafoL g){
