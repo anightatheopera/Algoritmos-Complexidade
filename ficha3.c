@@ -187,10 +187,26 @@ void addTHash(char *s, THash t){
     t[indice] = addNodo((Nodo*)t[indice],s);
 }
 
+struct nodo* tail(struct nodo* node){
+  struct nodo* ret = node->prox;
+  free(node);
+  return ret;
+}
+
 void removeTHash(char *s, THash t){
     int n = hash(s);
     int ind = n%Size;
-    t[ind] = NULL;
+    if(t[ind] == NULL){
+      return;
+    } else if(!strcmp(t[ind]->chave, s)){
+      t[ind] = tail(t[ind]);
+    } else {
+      for(; t[ind] != NULL; t[ind] = t[ind]->prox){
+        if(!strcmp(t[ind]->prox->chave, s)){
+          t[ind]->prox = tail(t[ind]->prox);
+        }
+      }
+    }
 }
 
 int lookup (char *s, THash t){
