@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-int minHeap[] = {56,78,43,100,30,85,95};
-
 #define Max 10
 typedef struct pQueue {
     int valores [Max];
@@ -101,9 +99,9 @@ int heap_pop(int h[], int N){
 }
 
 void ordenaHeap(int h[], int N){
-    for(int i = 0; i < N; i++){
-        swap(h, 0, N-i-1);
-        bubbleDown(0,h,N);
+    for(int i = 1; i < N; i++){
+        swap(h, 0, N-i);
+        bubbleDown(0,h,N-i);
     }
 }
 
@@ -128,97 +126,6 @@ soluçao acima:
 O(N)
 */
 
-#define Size 4
-typedef struct nodo {
-    char *chave; 
-    int ocorr;
-    struct nodo *prox;
-} Nodo;
-
-typedef Nodo *THash[Size];
-
-
-unsigned hash(char *str){
-    unsigned hash = 5381;
-    int c;
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    return hash;
-}
-
-void initEmpty (THash t){
-    for(int i=0; i<Size; i++)
-        t[i] = NULL;
-}
-
-Nodo* initNodo(char* s){
-    Nodo* r = malloc(sizeof(Nodo));
-    r->chave = s;
-    r->ocorr = 1;
-    r->prox = NULL;
-    return r;
-}
-Nodo* addNodo(Nodo* n, char* s){
-    if(!n) return initNodo(s);
-    else if (!strcmp(n->chave, s)) {
-        n->ocorr++;
-        } 
-        else {
-        n->prox = addNodo(n->prox, s);
-             }
-    return n;
-}
-
-Nodo* removeNodo(Nodo* n, char* s){
-    if(!n) return NULL;
-    else if (!strcmp(n->chave, s)) {
-        n->ocorr--;
-        } 
-        else {
-        n->prox = removeNodo(n->prox, s);
-             }
-    return n;
-}
-
-
-void addTHash(char *s, THash t){
-    int n = hash(s);
-    int indice = n%Size;
-    t[indice] = addNodo((Nodo*)t[indice],s);
-}
-
-struct nodo* tail(struct nodo* node){
-  struct nodo* ret = node->prox;
-  free(node);
-  return ret;
-}
-
-void removeTHash(char *s, THash t){
-    int n = hash(s);
-    int ind = n%Size;
-    if(t[ind] == NULL){
-      return;
-    } else if(!strcmp(t[ind]->chave, s)){
-      t[ind] = tail(t[ind]);
-    } else {
-      for(; t[ind] != NULL; t[ind] = t[ind]->prox){
-        if(!strcmp(t[ind]->prox->chave, s)){
-          t[ind]->prox = tail(t[ind]->prox);
-        }
-      }
-    }
-}
-
-int lookup (char *s, THash t){
-    int n = hash(s);
-    int ind = n%Size;
-    Nodo* node = t[ind];
-    while (node != NULL){
-        if(!strcmp(node->chave, s)) return node->ocorr;
-        else node = node->prox;
-    }
-    return 0;
-}
 
 #define Size2 10
 #define Free 0
@@ -292,17 +199,5 @@ int main(){
     for(int i=0;i<Max;i++){
         printf("%d ", pq.valores[i]);
     }
-    //THash2 t;
-    //initEmpty2(t);
-    //add2("boing",t);
-    //add2("a tua prima",t);
-    //add2("a tua prima",t);
-    //add2("a tua prima",t);
-    //add2("toppppppp",t);
-    //garb_collection(t);
-    //for(int i=0;i<Size2;i++){
-    //    if(t[i].status == Used)
-    //        printf("%s %d %d\n", t[i].chave, t[i].ocorr, t[i].status);
-    //}
     return 0;
 }
