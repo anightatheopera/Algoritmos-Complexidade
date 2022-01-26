@@ -55,18 +55,9 @@ void add(char *s, THash t){
     }
 }
 
-void addDel(char *s, THash t){
+void set_Delete(char *s, THash t){
     int ind = where(s);
-    if(lookup(s,t)){
-        t[ind].ocorr++;
-        t[ind].status = Del;
-    } 
-    else if(t[ind].status == Free){
-        t[ind].status = Del;
-        t[ind].ocorr = 1;
-        t[ind].chave = malloc(sizeof(s));
-        strcpy(t[ind].chave,s);
-    }
+    t[ind].status = Del;
 }
 
 int remover(char *s, THash t){
@@ -104,7 +95,7 @@ int main(){
     initEmpty(t);
     add("yuh",t);
     add("ola",t);
-    addDel("teste",t);
+    set_Delete("teste",t);
     add("adeefeu",t);
     add("yuh",t);
     remover("adeefeu",t);
