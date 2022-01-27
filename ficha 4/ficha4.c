@@ -11,18 +11,53 @@ typedef struct aresta {
 typedef int GrafoM [NV][NV];
 
 GrafoM teste = {
-    {0, 11, 12, 13},
-    {0, 0, 16, 17},
-    {0, 0, 0, 32},
-    {0, 0, 20, 0}
+    {0, 2, 7, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0},
+    {0, 0, 0, 0, 1, 0},
+    {5, 0, 0, 0, 8, 0},
+    {3, 0, 0, 0, 0, 0},
+    {4, 0, 0, 3, 2, 0}
                };
 
-GrafoM teste2 = {
-    {1, 0, 1, 0},
-    {1, 0, 1, 0},
-    {1, 0, 1, 0},
-    {1, 0, 1, 0}
-               };
+// funções de dar print
+void printGrafoL(GrafoL g) {
+    int i;
+    LAdj aux;
+    for (i=0; i<NV; i++) {
+        printf("%d : ", i);
+    for (aux = g[i]; aux != NULL; aux = aux->prox)
+        printf("%d(%d), ", aux->dest, aux->custo);
+    printf("\n");
+    }
+}
+
+void printGrafoM(GrafoM g) {
+    int i, j;
+    printf("\t");
+    for (j=0; j<NV; j++) printf("%d:\t", j);
+    printf("\n");
+    for (i=0; i<NV; i++) {
+        printf("%d :\t", i);
+        for (j=0; j<NV; j++) {
+            printf("%d,\t", g[i][j]);
+        }
+        printf("\n");
+    }
+}
+///////////////////////
+
+//funçoes auxiliares///
+
+void initGrafoL(GrafoL g) {
+    int i;
+    for (i=0; i<NV; i++)
+        g[i] = NULL;
+}
+
+void initGrafoM(GrafoM g){
+    for(int i = 0; i < NV; i++)
+        g[i][i] = 0;
+}
 
 LAdj append(int dest, int custo, LAdj cauda){
     LAdj novo = malloc(sizeof(struct aresta));
@@ -32,58 +67,84 @@ LAdj append(int dest, int custo, LAdj cauda){
     return novo;
 }
 
-void initGrafoL(GrafoL g) {
+int maxInArray(int arr[], int n){
     int i;
-    for (i=0; i<NV; i++)
-        g[i] = NULL;
-}
-
-void fromMat( GrafoM in, GrafoL out) {
-    int i, j;
-    initGrafoL(out);
-    for (i=0; i<NV; i++)
-        for (j=0; j<NV; j++)
-            if (in[i][j] > 0)
-	            out[i] = append( j, in[i][j], out[i]);
-}
-
-void graphl_debug(GrafoL g){
-  for(int i=0; i<NV; i++){
-    for(LAdj l = g[i]; l != NULL; l = l->prox)
-      printf("%d -> %d (%d)\n", i, l->dest, l->custo);
-  }
-}
-
-
-void inverte(GrafoL in, GrafoL out){
-  for(int i=0; i<NV; i++){
-    for(LAdj l = out[i]; l != NULL; l = l->prox)
-      in[l->dest] = append(i, l->custo, in[l->dest]);
-  }
-}
-
-int inDegree (GrafoL g){
-    int max = 0;
-    for(int i = 0; i < NV; i++){
-        int curr = 0;
-        for(LAdj l = g[i]; l != NULL; l = l->prox)
-            curr++;
-        if(curr > max){
-            max = curr;
-        }
-    }
+    int max = arr[0];
+    for (i = 1; i < n; i++)
+        if (arr[i] > max)
+            max = arr[i];
     return max;
 }
 
-int colorOK (GrafoL g, int cor[]){
-    int ncores = 0;
-    for(int i=0; i<NV; i++){
-        for(LAdj l = g[i]; l != NULL; l = l->prox){
-            if(cor[i] != cor[l->dest]) ncores++;
-            else return 0;
+void printArray(int arr[], int n){
+    for(int i = 0; i<n; i++){
+        printf("%d ,",arr[i]);
+    }
+    printf("\n");
+}
+
+void color(GrafoL g, int cor[]){
+    int c = 1;
+    int vis[NV];
+    for(int i = 0; i < NV; i++){ 
+        cor[i]=0;
+        vis[i]=0;
+    }
+    for(int i = 0; i < NV; i++){
+        for(LAdj n = g[i]; n != NULL; n = n->prox){
+            if(vis[i] != 1){
+                cor[i] = c;
+                vis[i] = 1;
+            }
+            if(vis[n->dest] != 1){
+                cor[n->dest] = c+1;
+                vis[n->dest] = 1;
+            }
+        }
+        c++;
+    }
+    printArray(cor,NV);
+} 
+///////////////////////
+
+void fromMat(GrafoM in, GrafoL out){
+    initGrafoL(out);
+    for(int i = 0; i < NV; i++){
+        for(int j = 0; j < NV; j++){
+            if(in[i][j] > 0)
+                out[i] = append(j,in[i][j],out[i]);
         }
     }
-    return ncores;
+}
+
+void inverte(GrafoL in, GrafoL out){
+    initGrafoL(out);
+    for(int i=0; i<NV; i++){
+        for(LAdj l = in[i]; l != NULL; l = l->prox)
+            out[l->dest] = append(i, l->custo, out[l->dest]);
+  }
+}
+
+int inDegree(GrafoL g){
+    int vis[NV];
+    for(int i = 0; i<NV; i++) vis[i] = 0;
+    for(int i = 0; i<NV; i++){
+        for(LAdj n = g[i]; n!=NULL; n=n->prox){
+            vis[n->dest]++;
+        }
+    }
+    return maxInArray(vis,NV);
+}
+
+int colorOK(GrafoL g, int cor[]){
+    LAdj aux;
+    for(int i = 0; i < NV; i++){
+        for(aux = g[i]; aux != NULL; aux = aux->prox)
+            if(cor[i] == cor[g[i]->dest])
+                return -1;
+    }
+    printArray(cor,NV);  
+    return 0;
 }
 
 int exists(GrafoL g, int from, int to){
@@ -104,16 +165,17 @@ int homomorfOK (GrafoL g, GrafoL h, int f[]){
     return 1;
 }
 
-/*
 int main(){
-    GrafoL yuh = {0};
-    fromMat(teste,yuh);
-    //graphl_debug(yuh);
-    GrafoL yuh2 = {0};
-    fromMat(teste2,yuh2);
-    int f[4] = {1,0,1,0};
-    int ola = homomorfOK(yuh,yuh2,f);
-    printf("%d numero de coisas", ola);
+    //printf("grafo em matriz \n");
+    //printGrafoM(teste);
+    //printf("\n");
+    GrafoL g, g2;
+    fromMat(teste,g);
+    printGrafoL(g);
+    //int aux[NV] = {1,2,2,3,4,5};
+    //int a = colorOK(g,aux);
+    //printf("as cores estao assim = %d",a);
+    //inverte(g,g2);
+    //printGrafoL(g2);
     return 0;
 }
-*/ 
