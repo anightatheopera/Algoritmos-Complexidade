@@ -13,7 +13,7 @@ typedef int GrafoM [NV][NV];
 GrafoM teste = {
     {0, 2, 7, 0, 0, 0},
     {0, 0, 0, 1, 0, 0},
-    {0, 0, 0, 0, 1, 0},
+    {0, 0, 0, 0, 0, 1},
     {5, 0, 0, 0, 8, 0},
     {3, 0, 0, 0, 0, 0},
     {4, 0, 0, 3, 2, 0}
@@ -44,10 +44,16 @@ void printGrafoM(GrafoM g) {
         printf("\n");
     }
 }
+
+void printArray(int arr[], int n){
+    for(int i = 0; i<n; i++){
+        printf("%d ,",arr[i]);
+    }
+    printf("\n");
+}
 ///////////////////////
 
 //funçoes auxiliares///
-
 void initGrafoL(GrafoL g) {
     int i;
     for (i=0; i<NV; i++)
@@ -74,13 +80,6 @@ int maxInArray(int arr[], int n){
         if (arr[i] > max)
             max = arr[i];
     return max;
-}
-
-void printArray(int arr[], int n){
-    for(int i = 0; i<n; i++){
-        printf("%d ,",arr[i]);
-    }
-    printf("\n");
 }
 
 void color(GrafoL g, int cor[]){
