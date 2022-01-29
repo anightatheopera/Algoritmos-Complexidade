@@ -184,7 +184,7 @@ int elem(int arr[], int x, int n){
     return 1;
 }
 
-int root(GrafoL g, int v, int vis[NV]){
+int leaf(GrafoL g, int v, int vis[NV]){
     for(LAdj a = g[v]; a != NULL; a = a->prox){
         if(!vis[a->dest]){
             return 0;
@@ -230,7 +230,7 @@ int ordTop(GrafoL g, int ord[]){
     int ord_i = NV-1;
     while(ord_i >= 0){
         for(int i=0; i<NV; i++){
-            if(!vis[i] && root(g, i, vis)){
+            if(!vis[i] && leaf(g, i, vis)){
                 vis[i] = 1;
                 ord[ord_i--] = i;
             }
