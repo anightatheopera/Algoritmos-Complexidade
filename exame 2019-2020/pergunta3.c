@@ -1,5 +1,5 @@
 typedef enum balancefactor { LH , EH , RH } BalanceFactor;
-typedef struct treenode {
+typedef struct treeNode {
     BalanceFactor bf;      // indicador de equilíbrio AVL
     int entry;             // inteiro guardado no nó
     int n_elems;           // número de elementos desta árvore
