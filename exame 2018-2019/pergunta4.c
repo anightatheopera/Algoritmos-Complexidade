@@ -1,6 +1,6 @@
 int dijkstraSP (Grafo g, int v, int pesos[], int pais[]);
 
-int aproxMeio(g, o, d){
+int aproxMeio(Grafo g, int o, int d){
     int pesos[NV] = {0};
     int pais[NV] = {0};
     dijkstra(g, o, pesos, pais);
