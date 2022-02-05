@@ -12,12 +12,13 @@ typedef int GrafoM [NV][NV];
 
 //matrizes de teste
 GrafoM teste = {
-    {0, 2, 7, 0, 0, 0},
-    {0, 0, 0, 1, 0, 0},
-    {0, 0, 0, 0, 0, 1},
-    {5, 0, 0, 0, 8, 0},
-    {3, 0, 0, 0, 0, 0},
-    {4, 0, 0, 3, 2, 0}
+//   0  1  2  3  4  5    
+    {0, 1, 0, 0, 0, 0}, //0
+    {0, 0, 0, 0, 1, 0}, //1
+    {0, 0, 0, 0, 0, 0}, //2
+    {1, 0, 0, 0, 0, 0}, //3
+    {0, 0, 1, 0, 0, 0}, //4
+    {0, 0, 1, 0, 0, 0}  //5
                };
 
 GrafoM norient = {
@@ -124,6 +125,17 @@ void printArray(int arr[], int n){
         printf("%d ,",arr[i]);
     }
     printf("\n");
+}
+
+void test_DF() {
+    GrafoL g;
+    fromMat(teste,g);
+    int i, n, v[NV], p[NV], l[NV];
+    printf("----------------------\nTESTE DF:\n=========\n");
+    n = DF(g, 0, v, p, l);
+    printf("Visitados = %d\n", n);
+    for (i=0; i<NV; i++)
+        printf("v[%d] = %d\tp[%d] = %d\tl[%d] = %d\n", i, v[i], i, p[i], i, l[i]);
 }
 ///////////////////////
 
@@ -241,10 +253,13 @@ int ordTop(GrafoL g, int ord[]){
 
 
 int main(){
+    /*
     GrafoL g;
     int c[NV] = {0};
     fromMat(acic,g);
     printf("%d\n",ordTop(g,c));
     printArray(c,NV);
+    */
+   test_DF();
     return 0;
 }
