@@ -31,13 +31,8 @@ void bubbleDown(int h[], int i, int N){
        }
 }
 
-void heapify(int h[], int N){
-    for(int i = N-1; i > -1; i++){
-        bubbleDown(h,i,N);
-    }
-}
-
 void replace(int h[], int x, int k, int N){
-    swap(x,k,h);
-    heapify(h,N);
+    h[k] = x;
+    bubbleDown(h, k, N);
+    bubbleUp(h, k);
 }
