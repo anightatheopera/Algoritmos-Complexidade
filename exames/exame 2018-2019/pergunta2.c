@@ -6,7 +6,7 @@ int BFS(Grafo g, int or, int vis[]){
     queue[end++] = or;
     while(front != end){
         x = queue[front++];
-        for(Nodo a = g[or]; a!=NULL; a=a->prox){
+        for(Nodo a = g[x]; a!=NULL; a=a->prox){
             vis[a->dest] = 1;
             queue[end++] = a->dest;
             i++
